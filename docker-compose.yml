@@ -10,7 +10,7 @@ services:
       # 自動建立 'investment_platform' 資料庫
       MYSQL_DATABASE: 'investment_platform'
       # ❗ 請設定一個安全的 Root 密碼
-      MYSQL_ROOT_PASSWORD: 'password' 
+      MYSQL_ROOT_PASSWORD: 'password'
     ports:
       # 將本機的 3307 Port 映射到容器的 3306
       - "3307:3306"
@@ -67,7 +67,8 @@ services:
     volumes:
       # 掛載程式碼，但不掛載 node_modules (讓它使用容器內的)
       - ./frontend:/app
-      - /app/node_modules
+      - node_modules:/app/node_modules
+    command: npm run dev -- --host
     stdin_open: true  # 保持 create-react-app 的 dev server 運行
     tty: true
     depends_on:
@@ -76,3 +77,4 @@ services:
 # 定義一個具名 volume 來持久化資料庫
 volumes:
   db_data:
+  node_modules:
