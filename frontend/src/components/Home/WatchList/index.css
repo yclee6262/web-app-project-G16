@@ -1,0 +1,167 @@
+/* --- 1. THE TRIGGER BUTTON --- */
+.watchlist-toggle-btn {
+  position: fixed;
+  right: 0;
+  top: 40%;
+
+  /* Modern Gradient & Shadow */
+  background: linear-gradient(135deg, #4f46e5, #7c3aed); /* Indigo to Purple */
+  box-shadow: -4px 4px 15px rgba(124, 58, 237, 0.4); /* Soft glow */
+
+  color: white;
+  border: none;
+  padding: 20px 12px; /* Slightly more breathing room */
+  border-radius: 12px 0 0 12px; /* Softer corners */
+  cursor: pointer;
+  z-index: 2000;
+  font-weight: 600;
+  letter-spacing: 1px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 14px;
+}
+
+.add-stock-list-item {
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 30px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.add-stock-list-item:hover {
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.watchlist-toggle-btn:hover {
+  padding-right: 18px;
+  filter: brightness(1.1); /* Brightens slightly instead of changing color */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother animation */
+}
+
+/* --- 2. THE DRAWER (GLASSMORPHISM) --- */
+.watchlist-drawer {
+  position: fixed;
+  top: 20%;
+  right: 0;
+  width: 320px; /* Slightly wider for better typography */
+  height: 50vh;
+
+  /* Glass Effect */
+  background: rgba(20, 20, 25, 0.95); /* Deep charcoal, slight see-through */
+  backdrop-filter: blur(12px); /* Blurs the website behind it */
+  border-left: 1px solid rgba(255, 255, 255, 0.1); /* Subtle edge */
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+
+  /* Modern Shape */
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+
+  z-index: 1999;
+  padding: 25px;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.watchlist-drawer.open {
+  transform: translateX(0);
+}
+
+/* --- 3. HEADER & TYPOGRAPHY --- */
+.watch-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+}
+
+/* --- 4. TABLE STYLING --- */
+.watch-list-table {
+  width: 100%;
+  border-collapse: separate; /* Allows spacing if needed */
+  border-spacing: 0;
+  color: #e0e0e0; /* Off-white text is easier to read */
+  font-size: 14px;
+}
+
+.watch-list-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Very subtle dividers */
+  padding: 12px 5px;
+  vertical-align: middle;
+}
+
+/* Header Row Styling (Optional - requires <thead> in HTML) */
+.watch-list-table thead td {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #888;
+  font-weight: 600;
+}
+
+.watch-list-table tbody tr {
+  transition: background-color 0.2s ease;
+  border-radius: 4px;
+}
+
+.watch-list-table tbody tr:hover {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.08
+  ); /* Sophisticated hover highlight */
+}
+
+/* Layout for the last cell (Price + Trash) */
+.watch-list-table tbody tr td:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Pushes content to right */
+  gap: 10px; /* Space between price and trash */
+}
+
+/* --- 5. COLORS & BUTTONS --- */
+.positive-change {
+  color: #4ade80; /* Neon Green */
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.2); /* Text Glow */
+}
+
+.negative-change {
+  color: #f87171; /* Soft Red */
+  font-weight: 600;
+}
+
+.delete-stock-list-item {
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+
+  background: rgba(255, 77, 77, 0.1); /* Red tint background */
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  color: #ff4d4d;
+  cursor: pointer;
+}
+
+.delete-stock-list-item:hover {
+  background: #ff4d4d; /* Solid red on hover */
+  color: white;
+}
+
+.watch-list-table tbody tr:hover .delete-stock-list-item {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}

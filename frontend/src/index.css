@@ -26,6 +26,11 @@ button {
   font: inherit;
 }
 
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
 /* Global scrollbar style for WebKit browsers */
 *::-webkit-scrollbar {
   width: 8px;

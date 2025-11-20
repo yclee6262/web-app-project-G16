@@ -11,7 +11,7 @@ import MyPortfolios from "../MyPortfolios";
 import Stimulation from "../Stimulation";
 import PremiumLabel from "./PremiumFeature";
 import FloatingAd from "./FloatingAd";
-
+import Watchlist from "./WatchList";
 
 export default function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -21,6 +21,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <HomeHeader toggleLoginModal={openLoginModal} />
+      <Watchlist />
       <PremiumLabel />
       <FloatingAd />
       <main className="home-main">
