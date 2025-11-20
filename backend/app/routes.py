@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from app.db import get_db
 import pymysql
+import app.services as services
 
 # 建立符合 /api/v1 規格的 Blueprint
 api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/v1')
@@ -123,15 +124,148 @@ def getUserPortfolio(user_id):
     API: getUserPortfolio
     取得特定使用者的投資組合資料
     """
-    return
+    try:
+        portfolio_data = services.get_user_portfolios_data(user_id)
+        if not portfolio_data:
+            return jsonify({
+                "data": [],
+                "code": 1,
+                "message": "no portfolios found for the user"
+            }), 200
+        return jsonify({
+            "data": portfolio_data,
+            "code": 1,
+            "message": "portfolios retrieved successfully"
+        }), 200
+    except pymysql.MySQLError as e:
+        return jsonify({
+            "data": [],
+            "code": 0,
+            "message": f"Database error: {e}"
+        }), 500
+    except Exception as e:
+        # 處理 Pandas 或其他潛在的運算錯誤
+        return jsonify({
+            "data": [],
+            "code": 0,
+            "message": f"An unexpected error occurred: {e}"
+        }), 500
+
 
 @api_v1.route('/portfolio/<int:portfolio_id>', methods=['POST'])
 def updatePortfolio(portfolio_id):
     """
     API: updatePortfolio
-    更新特定投資組合的資料 (新增/刪除/修改 投資標的)
+    更新特定投資組合的資料 (新增/修改投資標的)
     """
-    return
+    data = request.get_json()
+    if not data:
+        return jsonify({"code": 0, "message": "Missing request body"}), 400
+    
+    assets_map = data.get(str(portfolio_id))
+    # (防呆) 如果上面都沒抓到，但 data 本身就是 { "TSMC": 10 } 這種格式
+    if assets_map is None:
+        # 檢查 data 的 values 是否都是數字 (代表直接傳了資產 Map)
+        is_direct_map = all(isinstance(v, (int, float)) for k, v in data.items())
+        if is_direct_map:
+            assets_map = data
+
+    if assets_map is None or not isinstance(assets_map, dict):
+        return jsonify({
+            "code": 0, 
+            "message": "Invalid format. Expected { 'portfolioId': { 'TICKER': quantity } }"
+        }), 400
+    
+    # 轉換成服務層需要的格式
+    # Map: { "TSMC": 10, "AAPL": 90 }
+    # List: [ {"ticker": "TSMC", "quantity": 10}, {"ticker": "AAPL", "quantity": 90} ]
+    normalized_assets = []
+    for ticker, quantity in assets_map.items():
+        # 過濾掉可能混入的非股票欄位
+        if ticker in ['id', 'portfolioId', 'userId']: 
+            continue
+            
+        normalized_assets.append({
+            "ticker": ticker,
+            "quantity": float(quantity)
+        })
+
+    try:
+        # 3. 呼叫 Service 執行更新 (全量覆蓋)
+        result = services.update_portfolio_assets(portfolio_id, normalized_assets)
+        
+        # 提交交易
+        get_db().commit()
+
+        if result is None:
+             return jsonify({"data": {}, "code": 0, "message": "Portfolio not found"}), 404
+
+        # 4. 回傳成功回應 (符合您提供的格式)
+        return jsonify({
+            "data": result,
+            "code": 1,
+            "message": "Portfolio successfully added"
+        }), 200
+
+    except pymysql.MySQLError as e:
+        get_db().rollback()
+        return jsonify({"data": {}, "code": 0, "message": f"Database error: {e}"}), 500
+    except Exception as e:
+        get_db().rollback()
+        return jsonify({"data": {}, "code": 0, "message": f"Error: {e}"}), 500
+    
+@api_v1.route('/portfolio/create', methods=['POST'])
+def createPortfolio():
+    """
+    API: createPortfolio
+    建立新的投資組合
+    Request Body: { "userId": 1, "name": "My New Portfolio", "assets": ... }
+    """
+    data = request.get_json()
+    if not data or 'userId' not in data or 'name' not in data:
+        return jsonify({"code": 0, "message": "Missing userId or name"}), 400
+
+    user_id = data['userId']
+    name = data['name']
+    
+    normalized_assets = []
+    raw_assets = data.get('assets')
+
+    if raw_assets:
+        # 情況 A: List 格式 [ {"ticker": "AAPL", "quantity": 10}, ... ]
+        if isinstance(raw_assets, list):
+            normalized_assets = raw_assets
+        
+        # 情況 B: Map 格式 { "AAPL": 10, "TSMC": 20 }
+        elif isinstance(raw_assets, dict):
+            for ticker, qty in raw_assets.items():
+                normalized_assets.append({
+                    "ticker": ticker,
+                    "quantity": float(qty)
+                })
+
+    try:
+        # 呼叫 Service
+        result = services.create_user_portfolio(user_id, name, normalized_assets)
+        
+        # 提交交易
+        get_db().commit()
+
+        if result is None:
+            return jsonify({"code": 0, "message": "User not found"}), 404
+
+        return jsonify({
+            "data": result,
+            "code": 1,
+            "message": "Portfolio successfully created"
+        }), 201
+
+    except pymysql.MySQLError as e:
+        get_db().rollback()
+        return jsonify({"data": {}, "code": 0, "message": f"Database error: {e}"}), 500
+    except Exception as e:
+        get_db().rollback()
+        return jsonify({"data": {}, "code": 0, "message": f"Error: {e}"}), 500
 
 @api_v1.route('/portfolio/<int:portfolio_id>', methods=['DELETE'])
 def deletePortfolio(portfolio_id):
@@ -139,7 +273,32 @@ def deletePortfolio(portfolio_id):
     API: deletePortfolio
     刪除特定投資組合
     """
-    return
+    try:
+        # 呼叫 Service 執行刪除
+        success = services.delete_portfolio_by_id(portfolio_id)
+        
+        # 提交交易 (讓刪除生效)
+        get_db().commit()
+
+        if success:
+            # 刪除成功
+            return jsonify({
+                "code": 1,
+                "message": "portfolio successfully deleted"
+            }), 200
+        else:
+            # 找不到 ID (刪除失敗)
+            return jsonify({
+                "code": 0,
+                "message": "portfolio fail to be deleted"  # (可能是 ID 不存在)
+            }), 404
+
+    except pymysql.MySQLError as e:
+        get_db().rollback()
+        return jsonify({"code": 0, "message": f"Database error: {e}"}), 500
+    except Exception as e:
+        get_db().rollback()
+        return jsonify({"code": 0, "message": f"Error: {e}"}), 500
 
 @api_v1.route('/portfolio/performance/<int:portfolio_id>', methods=['GET'])
 def getPortfolioPerformance(portfolio_id):
