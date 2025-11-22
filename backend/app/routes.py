@@ -83,8 +83,6 @@ def user_login():
             }), 200
         else:
             # 使用者不存在或密碼錯誤
-            # (註: 修正您 user.md 中的錯字 "logic")
-            #
             return jsonify({
                 "data": {},
                 "code": 0,
@@ -336,3 +334,87 @@ def recommendPortfolio(portfolio_id):
     為特定投資組合提供資產配置建議
     """
     return
+
+# -------------------------------------------------------------------
+# API: Watchlist
+# -------------------------------------------------------------------
+@api_v1.route('/watchlists/<int:user_id>', methods=['GET'])
+def getUserWatchlist(user_id):
+    """
+    API: getUserWatchlist
+    取得使用者的關注清單
+    """
+    try:
+        watchlist_data = services.get_user_watchlist(user_id)
+        return jsonify({
+            "data": watchlist_data,
+            "code": 1,
+            "message": "watchlist retrieved successfully"
+        }), 200
+    except pymysql.MySQLError as e:
+        return jsonify({
+            "data": [],
+            "code": 0,
+            "message": f"Database error: {e}"
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "data": [],
+            "code": 0,
+            "message": f"An unexpected error occurred: {e}"
+        }), 500
+    
+@api_v1.route('/watchlists/<int:user_id>', methods=['POST'])
+def addStockWatchListItem(user_id):
+    """
+    API: addStockWatchListItem
+    新增關注股票
+    Request Body: { "ticker": "2330.TW" }
+    """
+    data = request.get_json()
+    if not data or 'ticker' not in data:
+        return jsonify({"data": {}, "code": 0, "message": "Missing ticker"}), 400
+        
+    ticker = data['ticker']
+    
+    try:
+        # 呼叫 Service 新增並取得股票資訊
+        added_stock_info = services.add_watchlist_item(user_id, ticker)
+        
+        # 提交交易
+        get_db().commit()
+        
+        return jsonify({
+            "data": added_stock_info,
+            "code": 1,
+            "message": "stock successfully added"
+        }), 200
+        
+    except Exception as e:
+        get_db().rollback()
+        return jsonify({"data": {}, "code": 0, "message": str(e)}), 500
+    
+@api_v1.route('/watchlists/<int:user_id>/<string:ticker>', methods=['DELETE'])
+def deleteWatchListItem(user_id, ticker):
+    """
+    API: deleteWatchListItem
+    移除關注股票
+    """
+    try:
+        success = services.remove_watchlist_item(user_id, ticker)
+        get_db().commit()
+        
+        if success:
+            return jsonify({
+                "code": 1,
+                "message": "stock successfully deleted"
+            }), 200
+        else:
+            return jsonify({
+                "code": 0,
+                "message": "Stock not found in watchlist"
+            }), 404 # 或者 200，視前端需求而定，這裡依據 doc 失敗回傳 code 0
+            
+    except Exception as e:
+        get_db().rollback()
+        return jsonify({"code": 0, "message": str(e)}), 500

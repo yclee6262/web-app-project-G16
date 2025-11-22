@@ -1,10 +1,9 @@
-1. Start the service by using
+Start the service by using
 ```bash
 docker compose up --build
 ```
 
-
-2. Download the historical data by using
+if database needed to be rebuilt, use following command
 ```bash
-docker compose exec investment_backend python seed.py
+docker compose down -v
 ```

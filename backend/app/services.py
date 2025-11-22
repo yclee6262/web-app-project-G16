@@ -216,3 +216,96 @@ def delete_portfolio_by_id(portfolio_id):
     affected_rows = cursor.rowcount
     
     return affected_rows > 0
+
+def get_stock_market_data(ticker):
+    """
+    [Helper] 取得單一股票的「最新價格」與「漲跌幅」
+    回傳: { 'ticker': 'AAPL', 'price': 150.0, 'change': 1.5 }
+    """
+    db = get_db()
+    cursor = db.cursor()
+    
+    # 撈取最近 2 筆股價資料 (為了計算漲跌幅)
+    sql = """
+        SELECT date, close 
+        FROM HistoricalPrices 
+        WHERE ticker_symbol = %s 
+        ORDER BY date DESC 
+        LIMIT 2
+    """
+    cursor.execute(sql, (ticker,))
+    rows = cursor.fetchall()
+    
+    if not rows:
+        return {'ticker': ticker, 'price': 0, 'change': 0}
+    
+    latest_price = float(rows[0]['close'])
+    change_percent = 0.0
+    
+    # 如果有至少兩天的資料，才能算漲跌幅
+    if len(rows) >= 2:
+        prev_price = float(rows[1]['close'])
+        if prev_price != 0:
+            change_percent = ((latest_price - prev_price) / prev_price) * 100
+            
+    return {
+        'ticker': ticker,
+        'price': round(latest_price, 2),
+        'change': round(change_percent, 2)
+    }
+
+def get_user_watchlist(user_id):
+    """
+    [WatchList API] 取得使用者的關注清單 (包含價格資訊)
+    """
+    db = get_db()
+    cursor = db.cursor()
+    
+    # 1. 找出該使用者關注的所有股票代號
+    sql = "SELECT ticker_symbol FROM WatchListItems WHERE user_id = %s"
+    cursor.execute(sql, (user_id,))
+    watchlist_items = cursor.fetchall()
+    
+    result = []
+    for item in watchlist_items:
+        ticker = item['ticker_symbol']
+        # 2. 逐一取得每支股票的行情 (未來可優化為批次查詢)
+        stock_data = get_stock_market_data(ticker)
+        result.append(stock_data)
+        
+    return result
+
+def add_watchlist_item(user_id, ticker):
+    """
+    [WatchList API] 新增關注股票
+    """
+    db = get_db()
+    cursor = db.cursor()
+    
+    # 1. 確保股票存在於 Securities 表 (避免 FK 錯誤)
+    # (如果不存在，先插入一個暫時的紀錄)
+    cursor.execute("SELECT ticker_symbol FROM Securities WHERE ticker_symbol = %s", (ticker,))
+    if not cursor.fetchone():
+        cursor.execute(
+            "INSERT INTO Securities (ticker_symbol, name, exchange) VALUES (%s, %s, 'Unknown')",
+            (ticker, ticker)
+        )
+    
+    # 2. 插入 WatchListItems (使用 IGNORE 避免重複關注報錯)
+    sql = "INSERT IGNORE INTO WatchListItems (user_id, ticker_symbol) VALUES (%s, %s)"
+    cursor.execute(sql, (user_id, ticker))
+    
+    # 3. 回傳該股票的最新資訊 (符合 API 需求)
+    return get_stock_market_data(ticker)
+
+def remove_watchlist_item(user_id, ticker):
+    """
+    [WatchList API] 移除關注股票
+    """
+    db = get_db()
+    cursor = db.cursor()
+    
+    sql = "DELETE FROM WatchListItems WHERE user_id = %s AND ticker_symbol = %s"
+    cursor.execute(sql, (user_id, ticker))
+    
+    return cursor.rowcount > 0
