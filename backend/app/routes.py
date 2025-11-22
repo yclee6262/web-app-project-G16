@@ -124,7 +124,25 @@ def getAssetHistoricalPrices(ticker_symbol):
     API: getAssetHistoricalPrices
     取得特定資產的歷史價格資料(過去一年)
     """
-    return
+    try:
+        history = services.get_historical_prices(ticker_symbol)
+        if not history:
+            return jsonify({
+                "data": {},
+                "code": 0,
+                "message": "Asset not found or no history"
+            }), 404
+            
+        return jsonify({
+            "data": {
+                "assetName": ticker_symbol,
+                "historicalPrice": history
+            },
+            "code": 1,
+            "message": "the historical price is successfully retrieved"
+        }), 200
+    except Exception as e:
+        return jsonify({"data": {}, "code": 0, "message": str(e)}), 500
 
 # ------------------------------------------------------------------
 # API: Portfolio
@@ -161,7 +179,6 @@ def getUserPortfolio(user_id):
             "code": 0,
             "message": f"An unexpected error occurred: {e}"
         }), 500
-
 
 @api_v1.route('/portfolio/<int:portfolio_id>', methods=['POST'])
 def updatePortfolio(portfolio_id):
@@ -317,7 +334,26 @@ def getPortfolioPerformance(portfolio_id):
     API: getPortfolioPerformance
     取得特定投資組合的績效資料
     """
-    return
+    try:
+        # 呼叫 Service
+        result = services.get_portfolio_performance_history(portfolio_id)
+        
+        if result is None:
+            return jsonify({
+                "data": {},
+                "code": 0,
+                "message": "Portfolio not found"
+            }), 404
+
+        # 回傳成功回應 (符合 docs/portfolio.md 格式)
+        return jsonify({
+            "data": result,
+            "code": 1,
+            "message": "portfolio history successfully retrieved"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"data": {}, "code": 0, "message": str(e)}), 500
 
 @api_v1.route('/portfolio/simulation/<int:portfolio_id>', methods=['GET'])
 def simulatePortfolio(portfolio_id):
@@ -325,7 +361,37 @@ def simulatePortfolio(portfolio_id):
     API: simulatePortfolio
     模擬特定投資組合的資產配置
     """
-    return
+    try:
+        # 呼叫 Service 執行模擬
+        percentiles = services.simulate_portfolio_growth(portfolio_id)
+        
+        if percentiles is None:
+            return jsonify({
+                "data": [],
+                "code": 0,
+                "message": "Fail to stimulate (No history or portfolio empty)"
+            }), 400
+
+        # 轉換為前端需要的格式 array of objects
+        # 格式: [ {"10th": [...]}, {"25th": [...]}, ... ]
+        formatted_val = []
+        # 依照常見順序排列
+        for key in ["10th", "25th", "50th", "75th", "90th"]:
+            if key in percentiles:
+                formatted_val.append({key: percentiles[key]})
+
+        return jsonify({
+            "data": {
+                "portfolioId": portfolio_id,
+                "name": f"Portfolio {portfolio_id}", # (可選: 再去 DB 查真實名稱)
+                "portfolioVal": formatted_val
+            },
+            "code": 1,
+            "message": "successfully stimulate"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"data": [], "code": 0, "message": str(e)}), 500
 
 @api_v1.route('/portfolio/recommendation/<int:portfolio_id>', methods=['GET'])
 def recommendPortfolio(portfolio_id):
@@ -333,7 +399,25 @@ def recommendPortfolio(portfolio_id):
     API: recommendPortfolio
     為特定投資組合提供資產配置建議
     """
-    return
+    try:
+        # 呼叫 Service
+        recommendation = services.generate_portfolio_recommendation(portfolio_id)
+        
+        if recommendation is None:
+            return jsonify({
+                "data": {},
+                "code": 0,
+                "message": "Insufficient data to generate recommendation (Need at least 2 days of history)"
+            }), 400
+            
+        return jsonify({
+            "data": recommendation,
+            "code": 1,
+            "message": "Recommendation generated successfully"
+        }), 200
+        
+    except Exception as e:
+        return jsonify({"data": {}, "code": 0, "message": str(e)}), 500
 
 # -------------------------------------------------------------------
 # API: Watchlist
