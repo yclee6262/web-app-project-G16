@@ -1,8 +1,10 @@
 import "./index.css";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { StoreContext } from "../../Utils/Context";
 
 export default function FloatingAd() {
   const [isVisible, setIsVisible] = useState(true);
+  const { userInfo, setUserInfo } = useContext(StoreContext);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -11,7 +13,7 @@ export default function FloatingAd() {
     }, 3000);
   };
 
-  if (!isVisible) return null;
+  if (!isVisible || userInfo.loginStatus) return null;
 
   return (
     <div className="floating-ad">

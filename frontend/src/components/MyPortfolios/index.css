@@ -1,7 +1,20 @@
 .my-portfolios {
   display: flex;
   width: 100%;
+  max-height: 630px;
   padding: 0 20px;
   flex-direction: column;
+  overflow-y: auto;
+  gap: 20px;
 }
 
+.my-portfolios header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.portfolio-description {
+  color: rgb(167, 160, 187);
+  margin-bottom: 30px;
+}
