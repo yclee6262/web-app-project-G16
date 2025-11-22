@@ -8,3 +8,8 @@ docker compose up --build
 ```bash
 docker compose exec investment_backend python seed.py
 ```
+
+if database needed to be rebuilt, use following command
+```bash
+docker compose down -v
+```
