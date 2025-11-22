@@ -105,7 +105,20 @@ def getAssets():
     API: getAssets
     取得所有資產資料
     """
-    return
+    try:
+        print("debug")
+        assets_data = services.get_all_stock_tickers()
+        return jsonify({
+            "data": assets_data,
+            "code": 1,
+            "message": "assets retrieved successfully"
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "data": [],
+            "code": 0,
+            "message": f"An unexpected error occurred: {e}"
+        }), 500
 
 @api_v1.route('/assets/price/<string:ticker_symbol>', methods=['GET'])
 def getAssetHistoricalPrices(ticker_symbol):
@@ -213,7 +226,7 @@ def updatePortfolio(portfolio_id):
     except Exception as e:
         get_db().rollback()
         return jsonify({"data": {}, "code": 0, "message": f"Error: {e}"}), 500
-    
+
 @api_v1.route('/portfolio/create', methods=['POST'])
 def createPortfolio():
     """

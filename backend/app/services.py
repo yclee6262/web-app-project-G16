@@ -2,6 +2,17 @@ from app.db import get_db
 import pymysql
 from collections import defaultdict
 
+def get_all_stock_tickers():
+    """
+    輔助函式: 獲取所有股票代號列表。
+    """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT ticker_symbol FROM Securities")
+    tickers = [row['ticker_symbol'] for row in cursor.fetchall()]
+    cursor.close()
+    return tickers
+
 def get_user_portfolios_data(user_id):
     """
     [功能 1] 獲取特定使用者所有投資組合的數據，包括最新價格。
