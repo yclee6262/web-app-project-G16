@@ -23,8 +23,7 @@ export default function HomeHeader({ toggleLoginModal }) {
         Welcome, {userInfo.userName}
       </div>
       <button
-        className="login-btn"
-        style={{ backgroundColor: userInfo.loginStatus ? "red" : "" }}
+        className={`header-login-btn ${userInfo.loginStatus ? "logout" : ""}`}
         onClick={!userInfo.loginStatus ? toggleLoginModal : logout}
       >
         {userInfo.loginStatus ? "Log Out" : "Log In"}
