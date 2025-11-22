@@ -60,3 +60,20 @@ CREATE TABLE PortfolioItems (
     FOREIGN KEY (`ticker_symbol`) REFERENCES Securities(`ticker_symbol`),
     UNIQUE KEY `uk_portfolio_security` (`portfolio_id`, `ticker_symbol`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- 表 6: WatchListItems (新增)
+-- ----------------------------
+-- 儲存使用者的關注清單
+CREATE TABLE WatchListItems (
+    `user_id` INT NOT NULL,
+    `ticker_symbol` VARCHAR(20) NOT NULL,
+    `added_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- 複合主鍵：確保同一個使用者對同一支股票只能關注一次
+    PRIMARY KEY (`user_id`, `ticker_symbol`),
+    
+    -- 外鍵關聯
+    FOREIGN KEY (`user_id`) REFERENCES Users(`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`ticker_symbol`) REFERENCES Securities(`ticker_symbol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
