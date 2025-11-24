@@ -125,7 +125,7 @@ def getAssetHistoricalPrices(ticker_symbol):
     取得特定資產的歷史價格資料(過去一年)
     """
     try:
-        history = services.get_historical_prices(ticker_symbol)
+        history = services.get_security_history(ticker_symbol)
         if not history:
             return jsonify({
                 "data": {},
