@@ -43,7 +43,13 @@ export default function MyPortfolios() {
         <PortfolioBar key={index} portfolioData={portfolioData} />
       ))}
       {portfolioDatas.length === 0 && (
-        <EmptyContent message="No portfolios yet" icon={<FolderPlus size={200}/>} />
+        <EmptyContent
+          message="No portfolios yet"
+          icon={<FolderPlus size={200} />}
+          subMessage={
+            "Get started by creating your first investment portfolio to track your assets and performance."
+          }
+        />
       )}
       {showEditModal && (
         <Modal onClose={() => setShowEditModal(false)}>

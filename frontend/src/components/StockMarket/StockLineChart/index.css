@@ -1,40 +1,149 @@
-.stock-line-chart-container {
-  display: flex;
-  background-color: #222531;
-  padding: 16px;
-  border-radius: 15px;
+/* Container / Card */
+.stock-card {
   width: 100%;
-  flex-direction: column;
-  justify-content: space-around;
+  background-color: #1e272e;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid #2d3436;
+  color: #dfe6e9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: 1000px; /* Adjust as needed */
+  margin: 0 auto;
 }
 
-.stock-line-chart-container:hover {
-  box-shadow: 0 0 3px rgba(255, 255, 255, 0.5), 0 0 8px rgba(255, 255, 255, 0.3),
-    0 0 15px rgba(255, 255, 255, 0.2);
+.stock-card:hover {
+  box-shadow: 0 0 8px rgba(0, 184, 148, 0.5), 0 0 15px rgba(0, 184, 148, 0.3),
+    0 0 25px rgba(0, 184, 148, 0.2);
   transition: box-shadow 0.3s ease;
 }
 
-.entered-symbol {
-  width: 20%;
-  height: 100%;
-  border: 1px solid #444;
-  border-radius: 4px;
-  background-color: #2c2f3a;
-  color: #dfe6e9;
-}
-
-.stock-search {
+/* Header & Typography */
+.stock-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-.search-btn {
-  padding: 8px 16px;
-  background-color: #0984e3;
-  color: white;
-  border: none;
-  border-radius: 4px;
+.chart-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.chart-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 0.875rem;
+  color: #b2bec3;
+}
+
+/* Controls Wrapper */
+.controls-wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Modern Select Dropdown */
+.modern-select {
+  background-color: #2d3436;
+  color: #fff;
+  border: 1px solid #636e72;
+  padding: 8px 12px;
+  border-radius: 8px;
+  outline: none;
   cursor: pointer;
+  font-size: 0.9rem;
+  min-width: 120px;
+  transition: border-color 0.2s;
+}
+
+.modern-select:focus {
+  border-color: #00b894;
+}
+
+/* Time Filter Buttons */
+.time-filters {
+  display: flex;
+  background: #2d3436;
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: none;
+  color: #b2bec3;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  color: #fff;
+}
+
+.filter-btn.active {
+  background-color: #00b894;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 184, 148, 0.3);
+}
+
+/* Chart Area */
+.chart-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 20px 20px 10px 0; /* Adjust padding for axis labels */
+  min-height: 350px;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background-color: rgba(30, 39, 46, 0.95);
+  border: 1px solid #636e72;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.tooltip-date {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #b2bec3;
+  margin-bottom: 4px;
+}
+
+.tooltip-price {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #00b894;
+  font-variant-numeric: tabular-nums; /* Aligns numbers nicely */
+}
+
+/* Loading & Empty States */
+.loading-state, .empty-state-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 350px;
+  width: 100%;
+  flex-direction: column;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
