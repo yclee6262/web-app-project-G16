@@ -1,167 +1,199 @@
-/* --- 1. THE TRIGGER BUTTON --- */
 .watchlist-toggle-btn {
   position: fixed;
   right: 0;
   top: 40%;
-
-  /* Modern Gradient & Shadow */
-  background: linear-gradient(135deg, #4f46e5, #7c3aed); /* Indigo to Purple */
-  box-shadow: -4px 4px 15px rgba(124, 58, 237, 0.4); /* Soft glow */
-
+  background: #4f46e5;
   color: white;
   border: none;
-  padding: 20px 12px; /* Slightly more breathing room */
-  border-radius: 12px 0 0 12px; /* Softer corners */
+  padding: 12px 14px 12px 10px;
+  border-radius: 8px 0 0 8px;
   cursor: pointer;
-  z-index: 2000;
-  font-weight: 600;
-  letter-spacing: 1px;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 14px;
-}
-
-.add-stock-list-item {
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 30px;
-  line-height: 30px;
-  cursor: pointer;
-  text-align: center;
-}
-
-.add-stock-list-item:hover {
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  z-index: 50; 
+  box-shadow: -2px 2px 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s;
 }
 
 .watchlist-toggle-btn:hover {
-  padding-right: 18px;
-  filter: brightness(1.1); /* Brightens slightly instead of changing color */
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother animation */
+  transform: translateX(-2px);
 }
 
-/* --- 2. THE DRAWER (GLASSMORPHISM) --- */
-.watchlist-drawer {
+/* --- Drawer Container (背景遮罩) --- */
+.watchlist-drawer-container {
   position: fixed;
-  top: 20%;
-  right: 0;
-  width: 320px; /* Slightly wider for better typography */
-  height: 50vh;
+  inset: 0; /* top:0, right:0, bottom:0, left:0 */
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明黑背景 */
+  backdrop-filter: blur(4px);
+  display: flex; 
+  justify-content: flex-end; /* 讓內容靠右 */
+  
+  /* 進場動畫控制 */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
 
-  /* Glass Effect */
-  background: rgba(20, 20, 25, 0.95); /* Deep charcoal, slight see-through */
-  backdrop-filter: blur(12px); /* Blurs the website behind it */
-  border-left: 1px solid rgba(255, 255, 255, 0.1); /* Subtle edge */
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+.watchlist-drawer-container.open {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-  /* Modern Shape */
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-
-  z-index: 1999;
-  padding: 25px;
-  overflow-y: auto;
+/* --- Drawer 本體 --- */
+.watchlist-drawer {
+  width: 360px; /* Drawer 寬度 */
+  max-width: 85vw; /* 手機版不超過螢幕 */
+  height: 100%; /* 佔滿高度 */
+  background-color: #111827; /* 深色背景 */
+  border-left: 1px solid #374151;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  
+  /* 滑入動畫 */
   transform: translateX(100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.watchlist-drawer.open {
+.watchlist-drawer-container.open .watchlist-drawer {
   transform: translateX(0);
 }
 
-/* --- 3. HEADER & TYPOGRAPHY --- */
-.watch-list-header {
+/* --- Header --- */
+.watchlist-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #1f2937;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 10px;
 }
 
-/* --- 4. TABLE STYLING --- */
-.watch-list-table {
-  width: 100%;
-  border-collapse: separate; /* Allows spacing if needed */
-  border-spacing: 0;
-  color: #e0e0e0; /* Off-white text is easier to read */
-  font-size: 14px;
-}
-
-.watch-list-table td {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Very subtle dividers */
-  padding: 12px 5px;
-  vertical-align: middle;
-}
-
-/* Header Row Styling (Optional - requires <thead> in HTML) */
-.watch-list-table thead td {
-  font-size: 12px;
-  text-transform: uppercase;
-  color: #888;
-  font-weight: 600;
-}
-
-.watch-list-table tbody tr {
-  transition: background-color 0.2s ease;
-  border-radius: 4px;
-}
-
-.watch-list-table tbody tr:hover {
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.08
-  ); /* Sophisticated hover highlight */
-}
-
-/* Layout for the last cell (Price + Trash) */
-.watch-list-table tbody tr td:last-child {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Pushes content to right */
-  gap: 10px; /* Space between price and trash */
-}
-
-/* --- 5. COLORS & BUTTONS --- */
-.positive-change {
-  color: #4ade80; /* Neon Green */
-  font-weight: 600;
-  text-shadow: 0 0 10px rgba(74, 222, 128, 0.2); /* Text Glow */
-}
-
-.negative-change {
-  color: #f87171; /* Soft Red */
-  font-weight: 600;
-}
-
-.delete-stock-list-item {
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-
-  background: rgba(255, 77, 77, 0.1); /* Red tint background */
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-  color: #ff4d4d;
-  cursor: pointer;
-}
-
-.delete-stock-list-item:hover {
-  background: #ff4d4d; /* Solid red on hover */
+.watchlist-title {
+  font-size: 1.1rem;
+  font-weight: 700;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
 }
 
-.watch-list-table tbody tr:hover .delete-stock-list-item {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0);
+.watchlist-subtitle {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+}
+.close-btn:hover { color: white; }
+
+/* --- Content (股票列表區 - 可捲動) --- */
+.watchlist-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Item Style */
+.watchlist-item {
+  background: #1f2937;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.watchlist-item:hover {
+  border-color: #4b5563;
+}
+
+.item-left { display: flex; align-items: center; gap: 12px; }
+.item-logo { width: 32px; height: 32px; border-radius: 50%; background: #fff; }
+.item-symbol { color: #e5e7eb; font-weight: 700; font-size: 0.9rem; }
+.item-name { color: #9ca3af; font-size: 0.75rem; max-width: 80px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+.item-right { display: flex; align-items: center; gap: 12px; }
+.price-group { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+.price-val { font-family: monospace; font-size: 0.95rem; font-weight: 600; }
+.price-pct { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-top: 2px; font-weight: bold; }
+
+/* 漲跌顏色 */
+.text-up { color: #f87171; }
+.text-down { color: #4ade80; }
+.bg-up { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+.bg-down { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  opacity: 0.5;
+  transition: all 0.2s;
+}
+.watchlist-item:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+/* --- Add Section (底部) --- */
+.watchlist-add-section {
+  padding: 1rem;
+  background: #0f172a;
+  border-top: 1px solid #1f2937;
+}
+
+.add-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.add-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.add-item {
+  background: #1f2937;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: #d1d5db;
+  border: 1px solid #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.add-item:hover {
+  background: #374151;
+  color: white;
+  border-color: #60a5fa;
+}
+
+.add-icon { color: #60a5fa; }
+
+.price-prev {
+  font-size: 0.75rem;  
+  color: rgba(255, 255, 255, 0.5); 
+  font-weight: 500;
+  margin-bottom: 2px;   
+  font-family: monospace;  
 }
