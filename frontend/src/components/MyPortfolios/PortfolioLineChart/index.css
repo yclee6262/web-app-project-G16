@@ -1,0 +1,97 @@
+/* --- Wrapper --- */
+.portfolio-line-chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Header & Filters --- */
+.controls-wrapper {
+  display: flex;
+  justify-content: flex-end; /* Pushes filters to the right */
+  margin-bottom: 1rem;
+}
+
+.time-filter-container {
+  display: flex;
+  background-color: #1e293b; /* Slate 800 */
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  gap: 2px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8; /* Slate 400 */
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  color: #e2e8f0;
+}
+
+.filter-btn.active {
+  background-color: #3b82f6; /* Blue 500 */
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Chart Container --- */
+.chart-canvas-container {
+  position: relative;
+  height: 350px; /* Fixed height for consistency */
+  width: 100%;
+  /* Removed bg color here as parent usually handles the inset look */
+}
+
+/* --- Loading / Empty States --- */
+.state-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.5); /* Semi-transparent fade */
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  font-size: 0.9rem;
+}
+
+/* --- Custom Tooltip --- */
+.custom-tooltip {
+  background-color: rgba(30, 41, 59, 0.95); /* Slate 800 with opacity */
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  min-width: 120px;
+}
+
+.tooltip-date {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.tooltip-price {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}

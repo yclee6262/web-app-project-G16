@@ -92,7 +92,6 @@ export default function StockLineChart() {
     }
     return null;
   };
-
   return (
     <div className="stock-card">
       {/* Header Section */}
