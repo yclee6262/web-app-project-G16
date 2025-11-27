@@ -1,8 +1,10 @@
 .stimulation-container {
   display: flex;
   width: 100%;
-  padding: 0 20px;
+  padding: 20px;
   flex-direction: column;
+  overflow-y: scroll;
+  height: 650px;
 }
 
 .stimulation-description {
@@ -14,8 +16,15 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
+  margin-bottom: 2rem;
 }
 
 .stimulation-container header select {
   width: 20%;
+}
+
+.stimulation-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
 }

@@ -1,6 +1,5 @@
-.performance-sum-container {
+.performance-metric-container {
   width: 100%;
-  margin-top: 40px;
 }
 
 .performance-summary-table {
@@ -17,6 +16,10 @@
 .performance-summary-table tbody tr {
   border-bottom: 1px solid #30363d;
   height: 40px;
+}
+
+.performance-summary-table tbody tr:hover {
+  background-color: #1f2328;
 }
 
 .performance-summary-table tbody tr td:not(:first-child) {
