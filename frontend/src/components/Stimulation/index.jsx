@@ -60,7 +60,7 @@ export default function Stimulation() {
     <div className="stimulation-container">
       <header>
         <div>
-          <h1>Monte Carlo Stimulation</h1>
+          <h1>Monte Carlo Simulation</h1>
           <p className="stimulation-description">
             Monte carlo simulation for portfolio
           </p>
