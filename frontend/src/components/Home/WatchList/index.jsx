@@ -111,10 +111,11 @@ export default function Watchlist() {
     return () => clearInterval(intervalId);
   }, []);
 
-  const getLogoUrl = (ticker) => {
-    const domain = domainMp[ticker];
-    return domain ? `https://logo.clearbit.com/${domain}?size=60` : "";
-  };
+ const getLogoUrl = (ticker) => {
+  return ticker 
+    ? `https://img.logo.dev/ticker/${ticker}?token=pk_DDGKtB3bSZKAgmfQgXRBsA` 
+    : "";
+};
 
   return (
     <div>
