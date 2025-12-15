@@ -15,7 +15,7 @@ DB_CONFIG = {
 }
 
 # --- 2. 要抓取的股票清單 ---
-TICKERS_TO_SEED = ['AAPL', 'GOOG', 'TSLA', 'MSFT', 'AMZN', 'NVDA', '2330.TW', 'NFLX', 'META', 'INTC', 'SOFI', 'CRWV', 'COST']
+TICKERS_TO_SEED = ['AAPL', 'GOOG', 'TSLA', 'MSFT', 'AMZN', 'NVDA', '2330.TW', 'NFLX', 'META', 'INTC', 'SOFI', 'CRWV', 'COST', 'FIG']
 
 # --- 3. 抓取歷史資料的日期範圍 ---
 START_DATE = (datetime.date.today() - datetime.timedelta(days=5*365)).strftime('%Y-%m-01') # 5 年前
