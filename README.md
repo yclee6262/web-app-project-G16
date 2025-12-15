@@ -1,8 +1,8 @@
-# NTU Investment Platform (智慧投資平台)
+# NTU Investment Platform
 
 一個基於 Web 的全端投資組合管理系統。整合了即時資產追蹤、個人化關注清單，以及基於蒙地卡羅模擬的未來財富預測功能。
 
-## 🚀 主要功能 (Features)
+## 🚀 主要功能
 
 * **使用者管理**: 支援註冊、登入。
 * **投資組合管理**: 可建立、編輯、刪除多個投資組合，並追蹤持股損益。
@@ -12,7 +12,7 @@
 * **智慧投資建議**: 根據夏普比率 (Sharpe Ratio) 與波動率，提供個股買入、賣出或持有的具體建議。
 * **API 文件**: 內建 Swagger UI，提供互動式 API 測試介面。
 
-## 🛠 技術堆疊 (Tech Stack)
+## 🛠 使用技術
 
 * **Frontend**: React, Vite, Recharts
 * **Backend**: Python Flask, NumPy, Pandas (Financial Analysis)
@@ -20,12 +20,11 @@
 * **Documentation**: Flasgger (Swagger UI)
 * **DevOps**: Docker, Docker Compose
 
-## 🏁 快速開始 (Getting Started)
+## 🏁 使用說明
 
 本專案使用 Docker 容器化部署，請確保您的電腦已安裝 Docker Desktop。
 
-### 1. 啟動服務 (Start the service)
-
+### 1. 啟動服務
 第一次執行或程式碼有修改時，請使用以下指令建置並啟動：
 
 ```bash
